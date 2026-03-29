@@ -1,0 +1,15 @@
+{
+  "name": "online-lab-evaluation-system",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "install:all": "npm install --prefix backend && npm install --prefix frontend/student-app && npm install --prefix frontend/staff-app",
+    "build:student": "npm run build --prefix frontend/student-app",
+    "build:staff": "npm run build --prefix frontend/staff-app",
+    "build:all": "npm run build:student && npm run build:staff",
+    "start": "node backend/server.js",
+    "dev:backend": "npm start --prefix backend",
+    "dev:student": "npm run dev --prefix frontend/student-app",
+    "dev:staff": "npm start --prefix frontend/staff-app"
+  }
+}

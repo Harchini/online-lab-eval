@@ -1,0 +1,123 @@
+<div class="dashboard">
+  <div class="glass-bg-anim"></div>
+  <div class="dash-header">
+    <h1>🏫 Staff Dashboard</h1>
+    <div style="display:flex; gap:1rem; align-items:center;">
+      <span style="color:#94a3b8; font-size:0.875rem;">{{ staffRegNo }}</span>
+      <button class="btn-logout" (click)="logout()">Logout</button>
+    </div>
+  </div>
+
+  <!-- Tab Navigation -->
+  <div class="tabs">
+    <button class="tab" [class.active]="activeTab==='questions'" (click)="switchTab('questions')">📝 Questions</button>
+    <button class="tab" [class.active]="activeTab==='leaderboard'" (click)="switchTab('leaderboard')">🏆 Leaderboard</button>
+    <button class="tab" [class.active]="activeTab==='submissions'" (click)="switchTab('submissions')">📋 Submissions</button>
+  </div>
+
+  <!-- Questions Tab -->
+  <div *ngIf="activeTab==='questions'">
+    <!-- Create Question Form -->
+    <div class="section-card">
+      <h2>➕ Create New Question</h2>
+      <form [formGroup]="questionForm" (ngSubmit)="submitQuestion()" class="form-row">
+        <div class="form-group">
+          <label>Question Title</label>
+          <input type="text" formControlName="title" placeholder="e.g. Sum of Two Numbers" />
+        </div>
+
+        <div class="form-group">
+          <label>Description</label>
+          <textarea formControlName="description" rows="3"
+            placeholder="Describe the problem clearly with expected input/output format..."></textarea>
+        </div>
+
+        <div class="tc-block" formArrayName="testCases">
+          <h4>Test Cases (each with marks for partial grading)</h4>
+          <div *ngFor="let tc of testCases.controls; let i=index" [formGroupName]="i" class="tc-row">
+            <div class="form-group">
+              <label>Input</label>
+              <input type="text" formControlName="input" placeholder="5 3" />
+            </div>
+            <div class="form-group">
+              <label>Expected Output</label>
+              <input type="text" formControlName="output" placeholder="8" />
+            </div>
+            <div class="form-group">
+              <label>Marks</label>
+              <input type="number" formControlName="marks" min="1" />
+            </div>
+            <button type="button" class="btn-remove" (click)="removeTestCase(i)">✕</button>
+          </div>
+          <button type="button" class="btn-add-tc" (click)="addTestCase()">+ Add Test Case</button>
+        </div>
+
+        <button type="submit" class="btn-primary" [disabled]="questionForm.invalid || submitting">
+          {{ submitting ? 'Creating...' : 'Create Question' }}
+        </button>
+        <div class="success-msg" *ngIf="successMsg">{{ successMsg }}</div>
+      </form>
+    </div>
+
+    <!-- Existing Questions -->
+    <div class="section-card">
+      <h2>📚 All Questions ({{ questions.length }})</h2>
+      <div class="q-list" *ngIf="questions.length > 0; else noQ">
+        <div class="q-item" *ngFor="let q of questions">
+          <div>
+            <div class="q-item-title">{{ q.title }}</div>
+            <div class="q-item-meta">Total Marks: {{ q.totalMarks }}</div>
+          </div>
+          <button class="btn-del" (click)="deleteQuestion(q._id)">Delete</button>
+        </div>
+      </div>
+      <ng-template #noQ>
+        <p style="color:#94a3b8; margin-top:0.5rem;">No questions created yet.</p>
+      </ng-template>
+    </div>
+  </div>
+
+  <!-- Leaderboard Tab -->
+  <div *ngIf="activeTab==='leaderboard'" class="section-card">
+    <h2>🏆 Student Leaderboard (Ordered by Marks)</h2>
+    <table *ngIf="leaderboard.length > 0; else noLB">
+      <thead>
+        <tr><th>Rank</th><th>Register No</th><th>Total Marks</th><th>Submissions</th><th>Last Active</th></tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let s of leaderboard; let i=index">
+          <td><span class="badge badge-gold">{{ getRank(i) }}</span></td>
+          <td>{{ s.regNo }}</td>
+          <td><span class="badge badge-green">{{ s.totalMarks }}</span></td>
+          <td>{{ s.submissionCount }}</td>
+          <td>{{ s.lastSubmission | date:'short' }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <ng-template #noLB><p style="color:#94a3b8; margin-top:0.5rem;">No submissions yet.</p></ng-template>
+  </div>
+
+  <!-- Submissions Tab -->
+  <div *ngIf="activeTab==='submissions'" class="section-card">
+    <h2>📋 All Student Submissions</h2>
+    <table *ngIf="submissions.length > 0; else noSub">
+      <thead>
+        <tr><th>Student</th><th>Question</th><th>Marks</th><th>Status</th><th>Submitted At</th></tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let s of submissions">
+          <td>{{ s.student?.regNo }}</td>
+          <td>{{ s.question?.title }}</td>
+          <td>{{ s.marksObtained }} / {{ s.question?.totalMarks }}</td>
+          <td>
+            <span [class]="'badge ' + (s.isFullCorrect ? 'badge-green' : 'badge-red')">
+              {{ s.isFullCorrect ? 'Full Marks' : 'Partial' }}
+            </span>
+          </td>
+          <td>{{ s.createdAt | date:'short' }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <ng-template #noSub><p style="color:#94a3b8; margin-top:0.5rem;">No submissions found.</p></ng-template>
+  </div>
+</div>

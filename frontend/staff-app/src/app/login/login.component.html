@@ -1,0 +1,36 @@
+<div class="login-page">
+  <div class="glass-bg-anim"></div>
+  <div class="login-card">
+    <div class="login-header">
+      <div class="icon">🏫</div>
+      <h1>Staff Portal</h1>
+      <p>Login to manage questions &amp; view student results</p>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+      <div class="form-group">
+        <label for="regNo">Staff ID / Register Number</label>
+        <input id="regNo" type="text" formControlName="regNo" placeholder="e.g. STAFF001" />
+        <span class="field-err" *ngIf="loginForm.get('regNo')?.invalid && loginForm.get('regNo')?.touched">
+          Staff ID is required
+        </span>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input id="password" type="password" formControlName="password" placeholder="Min 4 characters" />
+        <span class="field-err" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+          Password must be at least 4 characters
+        </span>
+      </div>
+
+      <div class="error-msg" *ngIf="error">{{ error }}</div>
+
+      <button type="submit" class="btn-login" [disabled]="loading || loginForm.invalid">
+        {{ loading ? 'Logging in...' : 'Login as Staff' }}
+      </button>
+    </form>
+
+    <p class="back-link"><a href="http://localhost:5000">← Back to Home</a></p>
+  </div>
+</div>

@@ -1,0 +1,19 @@
+<%- include('partials/header') %>
+<body>
+  <div class="glass-bg"></div>
+  <div class="container glass-card fade-in">
+    <header>
+      <h1>Online Lab Evaluator</h1>
+      <p>Master your coding skills with real-time feedback & ranking</p>
+    </header>
+    
+    <div class="portal-links">
+      <a href="/student" class="btn student-btn" onclick="startRipple()">Student Portal (React) &rarr;</a>
+      <a href="/staff" class="btn staff-btn" onclick="startRipple()">Staff Portal (Angular) &rarr;</a>
+    </div>
+
+    <div id="dynamic-message" class="dynamic-message"></div>
+  </div>
+  <script src="/js/main.js"></script>
+</body>
+<%- include('partials/footer') %>
