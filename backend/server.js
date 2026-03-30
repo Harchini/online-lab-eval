@@ -32,26 +32,34 @@ app.get('/', (req, res) => {
 });
 
 /** 
- * ADVANCED BYPASS: Using custom middleware instead of app.get() with wildcards.
- * This avoids the "Missing parameter name" error in Express 5/path-to-regexp 6.
+ * SPA FALLBACK: Ensure any sub-path within /student or /staff is served by index.html
  */
 app.use((req, res, next) => {
-    // If it's an API request, let it pass to the routers above
+    // Debug logging for production (view in Render logs)
+    console.log(`--- Request Path: ${req.path} ---`);
+
     if (req.path.startsWith('/api')) return next();
 
     // Student SPA fallback
     if (req.path.startsWith('/student')) {
-        return res.sendFile(path.join(__dirname, '../frontend/student-app/dist/index.html'));
+        const studentIndex = path.join(__dirname, '../frontend/student-app/dist/index.html');
+        console.log(`Serving Student App: ${studentIndex}`);
+        return res.sendFile(studentIndex);
     }
+    
     // Staff SPA fallback
     if (req.path.startsWith('/staff')) {
-        return res.sendFile(path.join(__dirname, '../frontend/staff-app/dist/staff-app/browser/index.html'));
+        const staffIndex = path.join(__dirname, '../frontend/staff-app/dist/staff-app/browser/index.html');
+        console.log(`Serving Staff App: ${staffIndex}`);
+        return res.sendFile(staffIndex);
     }
+    
     next();
 });
 
-// Handle 404
+// Handle 404 for non-SPA paths
 app.use((req, res) => {
+    console.warn(`404 Not Found: ${req.path}`);
     res.status(404).send('Resource not found');
 });
 
